@@ -23,35 +23,44 @@ function login(event) {
 // LOAD MENU UI WITH DROPDOWN
 function loadMenuUI() {
   const container = document.getElementById("menu-container");
-  container.innerHTML = "";
+  container.innerHTML = ''; // clear previous
 
   menus.forEach(menu => {
     const div = document.createElement("div");
     div.className = "menu-block";
 
+    // Create default QR with image type
+    const defaultType = "image";
+    const path = `https://theoterra.netlify.app/images/${menu}.jpg`;
+    const qrDataUrl = path;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrDataUrl)}`;
+
     div.innerHTML = `
       <h3>${menu}</h3>
-      <label>Select File Type:</label>
-      <select id="${menu}-type" onchange="updateMenuUI('${menu}')">
+
+      <!-- Dropdown to choose file type -->
+      <label for="type-${menu}">File Type:</label>
+      <select id="type-${menu}" onchange="updateQRCode('${menu}')">
         <option value="image">Image</option>
         <option value="pdf">PDF</option>
       </select>
 
-      <div id="${menu}-preview">
-        <img src="images/${menu}.jpg" width="150" onerror="this.style.display='none'"/>
-      </div>
+      <!-- Placeholder preview -->
+      <img id="preview-${menu}" src="images/${menu}.jpg" alt="${menu}" width="150" onerror="this.style.display='none'" />
 
-      <input type="file" id="${menu}-file" accept="image/*" onchange="uploadFile(event, '${menu}')">
+      <br/>
+      <input type="file" onchange="uploadFile(event, '${menu}')">
+      <br/><br/>
 
-      <br><br>
-      <a id="${menu}-qr" href="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://theoterra.netlify.app/images/${menu}.jpg" target="_blank">Generate QR</a> |
-      <a href="#" onclick="downloadQRCode('${menu}', document.getElementById('${menu}-qr').href); return false;">Download QR</a>
+      <!-- QR section -->
+      <a id="qr-link-${menu}" href="${qrUrl}" target="_blank">Generate QR</a> |
+      <a href="#" onclick="downloadQRCode('${menu}', '${qrUrl}'); return false;">Download QR</a>
     `;
 
     container.appendChild(div);
-    updateMenuUI(menu); // set initial state
   });
 }
+
 
 // UPDATE UI WHEN DROPDOWN CHANGES
 function updateMenuUI(menu) {
@@ -80,9 +89,9 @@ async function uploadFile(event, menuName) {
   const file = event.target.files[0];
   if (!file) return alert("No file selected");
 
-  const selectedType = document.getElementById(`${menuName}-type`).value;
-  const extension = selectedType === "pdf" ? "pdf" : "jpg";
-  const folder = selectedType === "pdf" ? "pdf" : "images";
+  const type = document.getElementById(`type-${menuName}`).value;
+  const folder = type === "pdf" ? "pdf" : "images";
+  const extension = type === "pdf" ? "pdf" : "jpg";
 
   const reader = new FileReader();
   reader.onloadend = async () => {
@@ -104,11 +113,11 @@ async function uploadFile(event, menuName) {
 
     const data = await res.json();
     if (res.ok) {
-      alert(`✅ ${menuName}.${extension} uploaded! Wait 30 seconds to update.`);
+      alert(`✅ ${menuName}.${extension} uploaded! Wait 30s for update.`);
       setTimeout(() => location.reload(), 3000);
     } else {
       console.error(data);
-      alert(`❌ Failed to update ${menuName}.${extension}`);
+      alert(`❌ Failed to upload ${menuName}.${extension}`);
     }
   };
 
@@ -133,4 +142,22 @@ async function downloadQRCode(menu, qrUrl) {
     alert("❌ Failed to download QR code.");
     console.error(err);
   }
+}
+
+function updateQRCode(menu) {
+  const type = document.getElementById(`type-${menu}`).value;
+  let filePath;
+
+  if (type === "image") {
+    filePath = `https://theoterra.netlify.app/images/${menu}.jpg`;
+    document.getElementById(`preview-${menu}`).src = `images/${menu}.jpg`;
+    document.getElementById(`preview-${menu}`).style.display = 'block';
+  } else {
+    filePath = `https://docs.google.com/gview?embedded=true&url=https://theoterra.netlify.app/pdf/${menu}.pdf`;
+    document.getElementById(`preview-${menu}`).style.display = 'none';
+  }
+
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(filePath)}`;
+  const qrLink = document.getElementById(`qr-link-${menu}`);
+  qrLink.href = qrUrl;
 }
