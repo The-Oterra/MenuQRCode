@@ -12,6 +12,7 @@ body {
   justify-content: center;
 }
 
+/* Default: 2 per row */
 .menu-block {
   background: #fff;
   border: 1px solid #ccc;
@@ -37,15 +38,16 @@ input[type="file"] {
   margin-top: 0.5rem;
 }
 
-/* 📱 Force full-width on mobile */
-@media (max-width: 768px) {
+/* ✅ Mobile: Stack one below one */
+@media (max-width: 767px) {
   #menu-container {
     flex-direction: column;
-    align-items: center;
+    gap: 1rem;
+    padding: 0 1rem;
   }
 
   .menu-block {
-    width: 100%;            /* Full width */
-    max-width: 90vw;        /* Keep padding on sides */
+    width: 100% !important;    /* Force full width */
+    max-width: 100% !important;
   }
 }
