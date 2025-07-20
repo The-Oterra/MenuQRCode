@@ -7,12 +7,12 @@ const REPO_NAME = "MenuQRCode";
 
 function login(event) {
   event.preventDefault(); // ✅ Prevents form reload
-  
+
   const u = document.getElementById("username").value;
   const p = document.getElementById("password").value;
 
   if (u === USERNAME && p === PASSWORD) {
-    document.getElementById("login-section").style.display = "none";
+    document.getElementById("login-wrapper").style.display = "none";
     document.getElementById("dashboard").style.display = "block";
     loadMenuUI();
   } else {
