@@ -1,7 +1,7 @@
 const USERNAME = "admin";
 const PASSWORD = "1234"; // static login
 
-const menus = ["menu1", "menu2", "menu3", "menu4", "menu5"];
+const menus = ["Menu-1", "Menu-2", "Menu-3", "Menu-4", "Menu-5"];
 const REPO_OWNER = "The-Oterra";
 const REPO_NAME = "MenuQRCode";
 
@@ -34,7 +34,7 @@ function loadMenuUI() {
       <br/>
       <input type="file" accept="image/*" onchange="uploadImage(event, '${menu}')">
       <br/>
-      <a href="${qrUrl}" target="_blank">Generate QR</a> |
+      <br/><a href="${qrUrl}" target="_blank">Generate QR</a> |
       <a href="#" onclick="downloadQRCode('${menu}', '${qrUrl}'); return false;">Download QR</a>
     `;
 
