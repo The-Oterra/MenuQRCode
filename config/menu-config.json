@@ -5,7 +5,7 @@
   },
   "Menu-2": {
     "type": "image",
-    "status": "disabled"
+    "status": "enabled"
   },
   "Menu-3": {
     "type": "image",
