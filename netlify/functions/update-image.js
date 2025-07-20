@@ -23,7 +23,7 @@ exports.handler = async function (event, context) {
     // 🔁 CONFIG MODE
     if (body.configUpdate) {
       const { menu, type, status } = body.configUpdate;
-      const configPath = "config.json";
+      const configPath = "config/menu-config.json";
       const configUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${configPath}`;
 
       // Get config.json from GitHub
