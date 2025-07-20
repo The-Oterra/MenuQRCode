@@ -37,7 +37,7 @@ input[type="file"] {
   margin-top: 0.5rem;
 }
 
-/* Responsive behavior */
+/* 📱 Force full-width on mobile */
 @media (max-width: 768px) {
   #menu-container {
     flex-direction: column;
@@ -45,6 +45,7 @@ input[type="file"] {
   }
 
   .menu-block {
-    width: 90%;
+    width: 100%;            /* Full width */
+    max-width: 90vw;        /* Keep padding on sides */
   }
 }
