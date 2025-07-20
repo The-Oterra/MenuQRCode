@@ -17,6 +17,6 @@
   },
   "Menu-5": {
     "type": "image",
-    "status": "enabled"
+    "status": "disabled"
   }
 }
