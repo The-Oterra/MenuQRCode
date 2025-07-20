@@ -1,3 +1,5 @@
+const pendingUpdates = {};
+
 const USERNAME = "admin";
 const PASSWORD = "1234";
 
@@ -69,7 +71,10 @@ async function loadMenuUI() {
   <div id="${menu}-preview"></div>
 
   <br/>
-  <input id="${menu}-file" type="file" onchange="uploadFile(event, '${menu}')">
+  <input id="${menu}-file" type="file" onchange="onFileSelect(event, '${menu}')">
+
+  <br/><br/>
+  <button onclick="submitMenuUpdate('${menu}')">Submit Changes</button>
 
   <br/><br/>
   <a id="${menu}-qr" href="#" target="_blank">Generate QR</a> |
@@ -113,13 +118,32 @@ async function updateConfig(menu, type, status) {
 function onTypeChange(menu) {
   const newType = document.getElementById(`${menu}-type`).value;
   const status = document.getElementById(`${menu}-status`).value;
-  updateConfig(menu, newType, status);
+
+  if (!pendingUpdates[menu]) pendingUpdates[menu] = {};
+  pendingUpdates[menu].type = newType;
+  pendingUpdates[menu].status = status;
+
+  updateMenuUI(menu); // update preview & qr based on new selection
 }
 
 function onStatusChange(menu) {
   const newStatus = document.getElementById(`${menu}-status`).value;
   const type = document.getElementById(`${menu}-type`).value;
-  updateConfig(menu, type, newStatus);
+
+  if (!pendingUpdates[menu]) pendingUpdates[menu] = {};
+  pendingUpdates[menu].status = newStatus;
+  pendingUpdates[menu].type = type;
+
+  updateMenuUI(menu);
+}
+
+function onFileSelect(event, menu) {
+  if (!pendingUpdates[menu]) pendingUpdates[menu] = {};
+  pendingUpdates[menu].file = event.target.files[0]; // store file object
+
+  // Optionally preview the selected image/pdf file here (if you want)
+  // For simplicity, just update preview
+  updateMenuUI(menu);
 }
 
 // UPDATE UI WHEN DROPDOWN CHANGES
@@ -157,44 +181,42 @@ function updateMenuUI(menu) {
 }
 
 // UPLOAD TO GITHUB VIA NETLIFY FUNCTION
-async function uploadFile(event, menuName) {
-  const file = event.target.files[0];
-  if (!file) return alert("No file selected");
-
-  const type = document.getElementById(`${menuName}-type`).value;
+async function uploadFileDirect(menu, file, type) {
   const folder = type === "pdf" ? "pdf" : "images";
   const extension = type === "pdf" ? "pdf" : "jpg";
 
-  const reader = new FileReader();
-  reader.onloadend = async () => {
-    const base64 = reader.result.split(",")[1];
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64 = reader.result.split(",")[1];
 
-    const payload = {
-      repoOwner: REPO_OWNER,
-      repoName: REPO_NAME,
-      imagePath: `${folder}/${menuName}.${extension}`,
-      base64Content: base64,
-      commitMessage: `Update ${menuName}.${extension} via dashboard`
+      const payload = {
+        repoOwner: REPO_OWNER,
+        repoName: REPO_NAME,
+        imagePath: `${folder}/${menu}.${extension}`,
+        base64Content: base64,
+        commitMessage: `Update ${menu}.${extension} via dashboard`
+      };
+
+      const res = await fetch("/.netlify/functions/update-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        resolve(await res.json());
+      } else {
+        const err = await res.json();
+        reject(err);
+      }
     };
 
-    const res = await fetch("/.netlify/functions/update-image", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      alert(`✅ ${menuName}.${extension} uploaded! Wait 30s for update.`);
-      setTimeout(() => location.reload(), 3000);
-    } else {
-      console.error(data);
-      alert(`❌ Failed to upload ${menuName}.${extension}`);
-    }
-  };
-
-  reader.readAsDataURL(file);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
+
 
 // QR CODE DOWNLOAD
 async function downloadQRCode(menu, qrUrl) {
@@ -232,4 +254,32 @@ function updateQRCode(menu) {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(filePath)}`;
   const qrLink = document.getElementById(`qr-link-${menu}`);
   qrLink.href = qrUrl;
+}
+
+async function submitMenuUpdate(menu) {
+  if (!pendingUpdates[menu]) {
+    alert("No changes to update");
+    return;
+  }
+
+  const { type, status, file } = pendingUpdates[menu];
+
+  try {
+    if (file) {
+      // Upload file first
+      await uploadFileDirect(menu, file, type);
+    }
+
+    // Update config (type + status)
+    await updateConfig(menu, type, status);
+
+    alert(`✅ Successfully updated ${menu}`);
+    delete pendingUpdates[menu]; // Clear after success
+
+    // Optionally refresh UI or just updateMenuUI(menu)
+    loadMenuUI(); // or updateMenuUI(menu) if you want partial refresh
+  } catch (err) {
+    console.error(err);
+    alert(`❌ Failed to update ${menu}: ${err.message || err}`);
+  }
 }
