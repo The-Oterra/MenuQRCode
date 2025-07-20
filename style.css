@@ -87,3 +87,12 @@ input[type="file"] {
   background-color: #fff;
   color: #000;
 }
+
+body {
+  background: url('https://theoterra.com/wp-content/uploads/2024/10/homepage_mainban.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
