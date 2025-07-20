@@ -106,12 +106,10 @@ async function updateConfig(menu, type, status) {
   });
 
   if (res.ok) {
-    alert(`✅ Updated configuration for ${menu}`);
-    setTimeout(() => location.reload(), 1500);
+    return await res.json(); // don't reload here!
   } else {
     const err = await res.json();
-    console.error(err);
-    alert(`❌ Failed to update config for ${menu}`);
+    throw new Error(err.message || "Update config failed");
   }
 }
 
@@ -262,24 +260,25 @@ async function submitMenuUpdate(menu) {
     return;
   }
 
-  const { type, status, file } = pendingUpdates[menu];
+  // Fallback to dropdown values if not changed
+  const type = pendingUpdates[menu].type || document.getElementById(`${menu}-type`).value;
+  const status = pendingUpdates[menu].status || document.getElementById(`${menu}-status`).value;
+  const file = pendingUpdates[menu].file;
 
   try {
     if (file) {
-      // Upload file first
       await uploadFileDirect(menu, file, type);
     }
 
-    // Update config (type + status)
     await updateConfig(menu, type, status);
 
     alert(`✅ Successfully updated ${menu}`);
-    delete pendingUpdates[menu]; // Clear after success
+    delete pendingUpdates[menu];
 
-    // Optionally refresh UI or just updateMenuUI(menu)
-    loadMenuUI(); // or updateMenuUI(menu) if you want partial refresh
+    loadMenuUI();
   } catch (err) {
     console.error(err);
     alert(`❌ Failed to update ${menu}: ${err.message || err}`);
   }
 }
+
