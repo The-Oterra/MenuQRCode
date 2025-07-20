@@ -88,6 +88,16 @@ input[type="file"] {
   color: #000;
 }
 
+#login-section {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 10vh auto;
+  color: #fff;
+}
+
+
 body {
   background: url('https://theoterra.com/wp-content/uploads/2024/10/homepage_mainban.jpg') no-repeat center center fixed;
   background-size: cover;
