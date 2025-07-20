@@ -250,8 +250,9 @@ function updateQRCode(menu) {
   }
 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(filePath)}`;
-  const qrLink = document.getElementById(`qr-link-${menu}`);
-  qrLink.href = qrUrl;
+  const qrLink = `https://theoterra.netlify.app/menu/${menu}`;
+  qr.href = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrLink)}`;
+
 }
 
 async function submitMenuUpdate(menu) {

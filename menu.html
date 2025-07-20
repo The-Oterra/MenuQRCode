@@ -1,0 +1,47 @@
+<!-- public/menu.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Loading Menu...</title>
+  <script>
+    async function redirect() {
+      const params = new URLSearchParams(window.location.search);
+      const menu = window.location.pathname.split("/").pop(); // e.g., Menu-1
+
+      if (!menu) {
+        document.body.innerHTML = "Invalid menu link.";
+        return;
+      }
+
+      try {
+        const res = await fetch('/config/menu-config.json');
+        const config = await res.json();
+
+        const menuConfig = config[menu];
+        if (!menuConfig || menuConfig.status === "disabled") {
+          document.body.innerHTML = "❌ This menu is currently disabled.";
+          return;
+        }
+
+        const fileType = menuConfig.type;
+        const folder = fileType === 'pdf' ? 'pdf' : 'images';
+        const ext = fileType === 'pdf' ? 'pdf' : 'jpg';
+
+        const redirectUrl = (fileType === 'pdf')
+          ? `https://docs.google.com/gview?embedded=true&url=https://theoterra.netlify.app/${folder}/${menu}.${ext}`
+          : `https://theoterra.netlify.app/${folder}/${menu}.${ext}`;
+
+        window.location.href = redirectUrl;
+      } catch (err) {
+        console.error(err);
+        document.body.innerHTML = "Error loading menu.";
+      }
+    }
+
+    window.onload = redirect;
+  </script>
+</head>
+<body>
+  Redirecting to your menu...
+</body>
+</html>
