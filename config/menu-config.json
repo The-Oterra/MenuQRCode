@@ -4,8 +4,8 @@
     "status": "enabled"
   },
   "Menu-2": {
-    "type": "image",
-    "status": "disabled"
+    "type": "pdf",
+    "status": "enabled"
   },
   "Menu-3": {
     "type": "image",
