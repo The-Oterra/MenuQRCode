@@ -52,7 +52,7 @@ input[type="file"] {
   }
 }
 
-#login-section {
+/* #login-section {
   background-image: url('https://theoterra.com/wp-content/uploads/2024/10/homepage_mainban.jpg');
   background-size: cover;
   background-position: center;
@@ -62,7 +62,7 @@ input[type="file"] {
   margin: 5vh auto;
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
   color: #fff;
-}
+} */
 
 #login-section input {
   display: block;
