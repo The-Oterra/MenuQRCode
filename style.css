@@ -1,15 +1,50 @@
 body {
   font-family: Arial, sans-serif;
   padding: 2rem;
+  margin: 0;
+  background: #f9f9f9;
+}
+
+#menu-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
 }
 
 .menu-block {
+  background: #fff;
   border: 1px solid #ccc;
   padding: 1rem;
-  margin-bottom: 1rem;
   width: 300px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.menu-block:hover {
+  transform: translateY(-4px);
 }
 
 img {
   margin: 0.5rem 0;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+input[type="file"] {
+  margin-top: 0.5rem;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  #menu-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .menu-block {
+    width: 90%;
+  }
 }
