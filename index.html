@@ -9,11 +9,15 @@
 </head>
 <body>
   <!-- Login Section -->
-  <div id="login-section">
-    <h2>Login</h2>
-    <input id="username" placeholder="Username" />
-    <input id="password" type="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
+  <div id="login-wrapper">
+    <div id="login-section">
+      <h2>Login</h2>
+      <form onsubmit="login(event)">
+        <input id="username" placeholder="Username" required />
+        <input id="password" type="password" required placeholder="Password" />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   </div>
 
   <!-- Dashboard Section -->
