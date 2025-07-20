@@ -47,9 +47,10 @@ async function loadMenuUI() {
         ? `https://docs.google.com/gview?embedded=true&url=${filePath}`
         : filePath;
 
-    const qrUrl = isEnabled
-      ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrDataUrl)}`
-      : `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=This QR is disabled`;
+    const qrUrl = (type === 'pdf')
+      ? `https://docs.google.com/gview?embedded=true&url=https://theoterra.netlify.app/pdf/${menu}.pdf`
+      : `https://theoterra.netlify.app/images/${menu}.jpg`;
+
 
     const div = document.createElement("div");
     div.className = "menu-block";
@@ -166,8 +167,8 @@ function updateMenuUI(menu) {
   const folder = selectedType === "pdf" ? "pdf" : "images";
   const extension = selectedType === "pdf" ? "pdf" : "jpg";
 
-  const fileUrl = `https://theoterra.netlify.app/${folder}/${menu}.${extension}`;
-  qr.href = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(fileUrl)}`;
+  const qrLink = `https://theoterra.netlify.app/menu/${menu}`;
+  qr.href = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrLink)}`;
 
   if (selectedType === "image") {
     preview.innerHTML = `<img src="${folder}/${menu}.jpg" width="150" onerror="this.style.display='none'" />`;
