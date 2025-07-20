@@ -52,27 +52,43 @@ input[type="file"] {
   }
 }
 
-/* #login-section {
-  background-image: url('https://theoterra.com/wp-content/uploads/2024/10/homepage_mainban.jpg');
+/* Full-screen background */
+body {
+  background: url('https://theoterra.com/wp-content/uploads/2024/10/homepage_mainban.jpg') no-repeat center center fixed;
   background-size: cover;
-  background-position: center;
-  padding: 4rem 2rem;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Centered login form box */
+#login-section {
+  background-color: rgba(0, 0, 0, 0.6); /* semi-transparent dark box */
+  padding: 2rem 2rem;
   border-radius: 8px;
   max-width: 400px;
-  margin: 5vh auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  width: 90%; /* responsive on mobile */
   color: #fff;
-} */
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  text-align: center;
+}
 
+/* Input fields */
 #login-section input {
   display: block;
   width: 100%;
   padding: 0.75rem;
-  margin: 0.5rem 0;
+  margin: 0.75rem 0;
   border: none;
   border-radius: 4px;
+  font-size: 1rem;
 }
 
+/* Button */
 #login-section button {
   width: 100%;
   padding: 0.75rem;
@@ -80,29 +96,12 @@ input[type="file"] {
   border: none;
   border-radius: 4px;
   font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
 }
 
 #login-section button:hover {
   background-color: #fff;
   color: #000;
-}
-
-#login-section {
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 400px;
-  margin: 10vh auto;
-  color: #fff;
-}
-
-
-body {
-  background: url('https://theoterra.com/wp-content/uploads/2024/10/homepage_mainban.jpg') no-repeat center center fixed;
-  background-size: cover;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
 }
 
