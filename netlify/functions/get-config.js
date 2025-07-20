@@ -8,9 +8,20 @@ exports.handler = async () => {
     return {
       statusCode: 200,
       body: JSON.stringify(res.data),
-      headers: { "Content-Type": "application/json" }
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
     };
-  } catch {
-    return { statusCode: 500, body: JSON.stringify({ error: "Cannot load config" }) };
+  } catch (error) {
+    console.error("Error loading config:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Cannot load config" }),
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
   }
 };
