@@ -5,7 +5,9 @@ const menus = ["menu1", "menu2", "menu3", "menu4", "menu5"];
 const REPO_OWNER = "The-Oterra";
 const REPO_NAME = "MenuQRCode";
 
-function login() {
+function login(event) {
+  event.preventDefault(); // ✅ Prevents form reload
+  
   const u = document.getElementById("username").value;
   const p = document.getElementById("password").value;
 
