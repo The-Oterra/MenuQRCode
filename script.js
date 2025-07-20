@@ -21,53 +21,119 @@ function login(event) {
 }
 
 // LOAD MENU UI WITH DROPDOWN
-function loadMenuUI() {
+async function loadMenuUI() {
   const container = document.getElementById("menu-container");
-  container.innerHTML = ''; // clear previous
+  container.innerHTML = '';
+
+  // 1. Load config from remote file
+  const cfgRes = await fetch('/.netlify/functions/get-config');
+  const config = await cfgRes.json();
 
   menus.forEach(menu => {
+    const menuCfg = config[menu] || { type: "image", status: "enabled" };
+    const { type, status } = menuCfg;
+
+    const isEnabled = status === "enabled";
+
+    const filePath =
+      type === "pdf"
+        ? `https://theoterra.netlify.app/pdf/${menu}.pdf`
+        : `https://theoterra.netlify.app/images/${menu}.jpg`;
+
+    const qrDataUrl =
+      type === "pdf"
+        ? `https://docs.google.com/gview?embedded=true&url=${filePath}`
+        : filePath;
+
+    const qrUrl = isEnabled
+      ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrDataUrl)}`
+      : `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=This QR is disabled`;
+
     const div = document.createElement("div");
     div.className = "menu-block";
 
-    // Create default QR with image type
-    const defaultType = "image";
-    const path = `https://theoterra.netlify.app/images/${menu}.jpg`;
-    const qrDataUrl = path;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrDataUrl)}`;
-
     div.innerHTML = `
-      <h3>${menu}</h3>
+  <h3>${menu}</h3>
+  <label for="${menu}-type">File Type:</label>
+  <select id="${menu}-type" onchange="onTypeChange('${menu}')">
+    <option value="image">Image</option>
+    <option value="pdf">PDF</option>
+  </select>
 
-      <!-- Dropdown to choose file type -->
-      <label for="type-${menu}">File Type:</label>
-      <select id="type-${menu}" onchange="updateQRCode('${menu}')">
-        <option value="image">Image</option>
-        <option value="pdf">PDF</option>
-      </select>
+  <label for="${menu}-status">Status:</label>
+  <select id="${menu}-status" onchange="onStatusChange('${menu}')">
+    <option value="enabled">Enabled</option>
+    <option value="disabled">Disabled</option>
+  </select>
 
-      <!-- Placeholder preview -->
-      <img id="preview-${menu}" src="images/${menu}.jpg" alt="${menu}" width="150" onerror="this.style.display='none'" />
+  <div id="${menu}-preview"></div>
 
-      <br/>
-      <input type="file" onchange="uploadFile(event, '${menu}')">
-      <br/><br/>
+  <br/>
+  <input id="${menu}-file" type="file" onchange="uploadFile(event, '${menu}')">
 
-      <!-- QR section -->
-      <a id="qr-link-${menu}" href="${qrUrl}" target="_blank">Generate QR</a> |
-      <a href="#" onclick="downloadQRCode('${menu}', '${qrUrl}'); return false;">Download QR</a>
-    `;
+  <br/><br/>
+  <a id="${menu}-qr" href="#" target="_blank">Generate QR</a> |
+  <a href="#" onclick="downloadQRCode('${menu}'); return false;">Download QR</a>
+`;
 
     container.appendChild(div);
   });
+}
+
+async function updateConfig(menu, type, status) {
+  const payload = {
+    repoOwner: REPO_OWNER,
+    repoName: REPO_NAME,
+    configUpdate: { menu, type, status }
+  };
+
+  const res = await fetch("/.netlify/functions/update-image", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  if (res.ok) {
+    alert(`✅ Updated configuration for ${menu}`);
+    setTimeout(() => location.reload(), 1500);
+  } else {
+    const err = await res.json();
+    console.error(err);
+    alert(`❌ Failed to update config for ${menu}`);
+  }
+}
+
+function onTypeChange(menu) {
+  const newType = document.getElementById(`type-${menu}`).value;
+  const status = document.getElementById(`status-${menu}`).value;
+  updateConfig(menu, newType, status);
+}
+
+function onStatusChange(menu) {
+  const newStatus = document.getElementById(`status-${menu}`).value;
+  const type = document.getElementById(`type-${menu}`).value;
+  updateConfig(menu, type, newStatus);
 }
 
 
 // UPDATE UI WHEN DROPDOWN CHANGES
 function updateMenuUI(menu) {
   const selectedType = document.getElementById(`${menu}-type`).value;
+  const selectedStatus = document.getElementById(`${menu}-status`).value;
   const fileInput = document.getElementById(`${menu}-file`);
   const preview = document.getElementById(`${menu}-preview`);
   const qr = document.getElementById(`${menu}-qr`);
+
+  if (selectedStatus === 'disabled') {
+    preview.innerHTML = `<p>⚠️ QR code for ${menu} is disabled</p>`;
+    fileInput.style.display = 'none';
+    qr.href = '#';
+    qr.textContent = 'QR Disabled';
+    return;
+  } else {
+    fileInput.style.display = '';
+    qr.textContent = 'Generate QR';
+  }
 
   const folder = selectedType === "pdf" ? "pdf" : "images";
   const extension = selectedType === "pdf" ? "pdf" : "jpg";
