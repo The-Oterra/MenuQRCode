@@ -51,3 +51,39 @@ input[type="file"] {
     max-width: 100% !important;
   }
 }
+
+#login-section {
+  background-image: url('https://theoterra.com/wp-content/uploads/2024/10/homepage_mainban.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 4rem 2rem;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 5vh auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  color: #fff;
+}
+
+#login-section input {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: none;
+  border-radius: 4px;
+}
+
+#login-section button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #ffffffcc;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#login-section button:hover {
+  background-color: #fff;
+  color: #000;
+}
