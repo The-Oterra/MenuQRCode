@@ -77,6 +77,13 @@ async function loadMenuUI() {
 `;
 
     container.appendChild(div);
+
+    // Set dropdown selected values to config
+    document.getElementById(`${menu}-type`).value = type;
+    document.getElementById(`${menu}-status`).value = status;
+
+    // Update preview, QR, etc
+    updateMenuUI(menu);
   });
 }
 
@@ -104,17 +111,16 @@ async function updateConfig(menu, type, status) {
 }
 
 function onTypeChange(menu) {
-  const newType = document.getElementById(`type-${menu}`).value;
-  const status = document.getElementById(`status-${menu}`).value;
+  const newType = document.getElementById(`${menu}-type`).value;
+  const status = document.getElementById(`${menu}-status`).value;
   updateConfig(menu, newType, status);
 }
 
 function onStatusChange(menu) {
-  const newStatus = document.getElementById(`status-${menu}`).value;
-  const type = document.getElementById(`type-${menu}`).value;
+  const newStatus = document.getElementById(`${menu}-status`).value;
+  const type = document.getElementById(`${menu}-type`).value;
   updateConfig(menu, type, newStatus);
 }
-
 
 // UPDATE UI WHEN DROPDOWN CHANGES
 function updateMenuUI(menu) {
@@ -155,7 +161,7 @@ async function uploadFile(event, menuName) {
   const file = event.target.files[0];
   if (!file) return alert("No file selected");
 
-  const type = document.getElementById(`type-${menuName}`).value;
+  const type = document.getElementById(`${menuName}-type`).value;
   const folder = type === "pdf" ? "pdf" : "images";
   const extension = type === "pdf" ? "pdf" : "jpg";
 
