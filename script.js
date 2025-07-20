@@ -22,6 +22,7 @@ function loadMenuUI() {
   const container = document.getElementById("menu-container");
 
   menus.forEach(menu => {
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://theoterra.netlify.app/images/${menu}.jpg`;
     const div = document.createElement("div");
     div.className = "menu-block";
 
@@ -31,7 +32,8 @@ function loadMenuUI() {
       <br/>
       <input type="file" accept="image/*" onchange="uploadImage(event, '${menu}')">
       <br/>
-      <a href="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://theoterra.netlify.app/images/${menu}.jpg" target="_blank">Generate QR</a>
+      <a href="${qrUrl}" target="_blank">Generate QR</a>
+      <a href="${qrUrl}" download="${menu}-qr.png">Download QR</a>
     `;
 
     container.appendChild(div);
@@ -62,7 +64,7 @@ async function uploadImage(event, menuName) {
 
     const data = await res.json();
     if (res.ok) {
-      alert(`✅ ${menuName}.jpg updated!`);
+      alert(`✅ ${menuName}.jpg uploaded Sucessfully! Wait 30 Seconds to Get Updated`);
       setTimeout(() => location.reload(), 3000); // reload to show updated image
     } else {
       console.error(data);
