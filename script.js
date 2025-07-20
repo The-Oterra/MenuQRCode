@@ -32,8 +32,8 @@ function loadMenuUI() {
       <br/>
       <input type="file" accept="image/*" onchange="uploadImage(event, '${menu}')">
       <br/>
-      <a href="${qrUrl}" target="_blank">Generate QR</a>
-      <a href="${qrUrl}" download="${menu}-qr.png">Download QR</a>
+      <a href="${qrUrl}" target="_blank">Generate QR</a> |
+      <a href="#" onclick="downloadQRCode('${menu}', '${qrUrl}'); return false;">Download QR</a>
     `;
 
     container.appendChild(div);
@@ -74,3 +74,23 @@ async function uploadImage(event, menuName) {
 
   reader.readAsDataURL(file);
 }
+
+async function downloadQRCode(menu, qrUrl) {
+  try {
+    const response = await fetch(qrUrl);
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${menu}-qr.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert("❌ Failed to download QR code.");
+    console.error(err);
+  }
+}
+
