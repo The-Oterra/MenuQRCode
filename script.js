@@ -218,9 +218,12 @@ async function uploadFileDirect(menu, file, type) {
 
 
 // QR CODE DOWNLOAD
-async function downloadQRCode(menu, qrUrl) {
+async function downloadQRCode(menu) {
   try {
-    const response = await fetch(qrUrl);
+    const qrDataUrl = `https://theoterra.netlify.app/menu/${menu}`;
+    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrDataUrl)}`;
+
+    const response = await fetch(qrImageUrl);
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);
 
@@ -236,6 +239,7 @@ async function downloadQRCode(menu, qrUrl) {
     console.error(err);
   }
 }
+
 
 function updateQRCode(menu) {
   const type = document.getElementById(`type-${menu}`).value;
