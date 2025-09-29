@@ -48,7 +48,9 @@ MenuQRCode/
 ### Prerequisites
 
 - Node.js (for local server, builds, or functions)  
-- (Optional) Netlify CLI or account (if deploying via Netlify)  
+- (Optional) Netlify CLI or account (if deploying via Netlify)
+- Github Personal Authentication Token is also required
+- The Admin Id and Password is set using the Encrypted version of Sha 256, to Decrypt just use the online decrypter
 
 ### Local Setup
 
@@ -100,5 +102,6 @@ Contributions, bug reports, and feature requests are welcome. Please open an iss
 
 ---
 
-> Developed by The-Oterra  
-> (You may add your name, contact, or links here)  
+> Developed by The-Oterra
+> Abhishek B, IT Department (15th Jun 2025 to 30th Sep 2025)
+> Contact: +91 8526502006 for the Code hosting
